@@ -21,7 +21,18 @@ $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 $no = 1;
                 while ($row = $result->fetch_assoc()) {
-                    $status = ($row['kelembapan'] > 50) ? 'Tinggi' : 'Baik';
+                    // Menentukan status kelembapan berdasarkan nilai kelembapan
+                    if ($row['kelembapan'] < 25) {
+                        $status = 'Tingkat kelembapan terlalu rendah, memicu kekeringan udara.';
+                    } elseif ($row['kelembapan'] >= 25 && $row['kelembapan'] < 30) {
+                        $status = 'Tingkat kelembapan udara yang rendah, namun cukup wajar.';
+                    } elseif ($row['kelembapan'] >= 30 && $row['kelembapan'] <= 60) {
+                        $status = 'Tingkat kelembapan udara yang ideal.';
+                    } elseif ($row['kelembapan'] > 60 && $row['kelembapan'] <= 70) {
+                        $status = 'Tingkat kelembapan udara yang tinggi, namun cukup wajar.';
+                    } else {
+                        $status = 'Tingkat kelembapan terlalu tinggi, memicu perkembangan bakteri.';
+                    }
             ?>
                     <tr>
                         <td><?= $no++ ?></td>
@@ -36,22 +47,18 @@ $result = $conn->query($sql);
                 echo '<tr><td colspan="5">Tidak ada data yang tersedia</td></tr>';
             }
             ?>
-
-
         </tbody>
-
     </table>
 </div>
+
 <script>
     $(document).ready(function() {
-        // $('#table_data').DataTable();
         $('#table_data').DataTable({
             "pageLength": 10,
             "ordering": true,
             "info": true,
             "searching": true
         });
-
     });
 </script>
 
